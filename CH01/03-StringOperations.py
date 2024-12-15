@@ -1,5 +1,10 @@
-# Pythonic
-name = "shahin abdi"
-capitilzed_name = name.title()
+# Non Pythonic
 
-print(capitilzed_name)
+result = ""
+words = ["Hello", "World"]
+
+for word in words:
+    result += word + " "
+result = result.strip()
+
+print(result)
