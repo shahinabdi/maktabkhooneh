@@ -1,10 +1,6 @@
-# Non Pythonic
+# Pythonic
 
-result = ""
 words = ["Hello", "World"]
-
-for word in words:
-    result += word + " "
-result = result.strip()
+result = " ".join(words)
 
 print(result)
