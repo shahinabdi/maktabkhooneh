@@ -1,7 +1,5 @@
-# Non pythonic
+# pythonic
 fruits = ["apple", "banana", "orange"]
-index = 0
 
-for fruit in fruits:
+for index, fruit in enumerate(fruits):
     print(f"{index}: {fruit}")
-    index += 1
