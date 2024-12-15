@@ -1,5 +1,5 @@
-# Non Pythonic
+# Pythonic
 name = "shahin abdi"
-capitilzed_name = name[0].upper() + name[1:]
+capitilzed_name = name.title()
 
 print(capitilzed_name)
