@@ -1,9 +1,9 @@
+import csv
 import logging
 import time
 from datetime import datetime
 from typing import Dict, List
 
-import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
@@ -91,6 +91,21 @@ class ArxivScraper:
                     papers.append(paper_info)
         logger.info(f"Found {len(papers)} papers in category {category}")
         return papers
+
+    def save_to_csv(self, papers: List[Dict], filename: str):
+        if not papers:
+            logger.warning("No papers to save")
+            return
+
+        try:
+            fieldnames = papers[0].keys()
+            with open(filename, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(papers)
+            logger.info(f"Successfully saved {len(papers)} papers to {filename}")
+        except IOError as e:
+            logger.error(f"Error saving to CSV: {str(e)}")
 
 
 # url = "https://arxiv.org/list/astro-ph.CO/new"
