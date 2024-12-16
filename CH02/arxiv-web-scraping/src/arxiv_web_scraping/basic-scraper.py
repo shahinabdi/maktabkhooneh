@@ -1,6 +1,7 @@
 import logging
 import time
 from datetime import datetime
+from typing import Dict, List
 
 import pandas as pd
 import requests
@@ -25,6 +26,49 @@ class ArxivScraper:
         except requests.RequestException as e:
             logging.error(f"Error fetching {url}: {str(e)}")
             return ""
+
+    def parse_paper_info(self, dt_element, dd_element) -> Dict:
+        try:
+            arxiv_id = dt_element.find("a", {"title": "Abstract"}).text.strip()
+            arxiv_id = arxiv_id.replace("arXiv:", "").strip()
+
+            title_element = dd_element.find("div", {"class": "list-title"})
+            title = title_element.text.replace("Title:", "").strip()
+
+            authors_element = dd_element.find("div", {"class": "list-authors"})
+            authors = authors_element.text.strip()
+
+            comments_element = dd_element.find("div", {"class": "list-comments"})
+            comments = (
+                comments_element.text.replace("Comments:", "").strip()
+                if comments_element
+                else "No comments"
+            )
+
+            subjects_element = dd_element.find("div", {"class": "list-subjects"})
+            subjects = (
+                subjects_element.text.replace("Subjects:", "").strip()
+                if subjects_element
+                else "No subjects"
+            )
+
+            abstract = dd_element.find("p", {"class": "mathjax"}).text.strip()
+
+            pdf_link = f"{self.base_url}/pdf/{arxiv_id}"
+
+            return {
+                "arxiv_id": arxiv_id,
+                "title": title,
+                "authors": authors,
+                "comments": comments,
+                "subjects": subjects,
+                "abstract": abstract,
+                "link": pdf_link,
+                "scrape_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            }
+        except Exception as e:
+            logger.error(f"Error parsing paper entry: {str(e)}")
+            return {}
 
 
 # url = "https://arxiv.org/list/astro-ph.CO/new"
