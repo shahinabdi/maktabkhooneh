@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "arxiv-web-scraping"
-version = "2.0.0"
-description = "Basic Scraper: Arxiv.org"
+version = "2.1.0"
+description = "Multi Category Scraper: Arxiv.org"
 authors = ["Shahin ABDI <contact@shahinabdi.fr>"]
 readme = "README.md"
 packages = [{include = "arxiv_web_scraping", from = "src"}]
