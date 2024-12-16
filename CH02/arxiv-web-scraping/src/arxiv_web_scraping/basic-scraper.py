@@ -14,11 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 class ArxivScraper:
+    """Scraper for extracting paper information from arxiv.org"""
+
     def __init__(self, base_url: str = "https://arxiv.org"):
         self.base_url = base_url
         self.session = requests.Session()
 
     def get_page_content(self, url: str) -> str:
+        """Fetch page content"""
         try:
             response = self.session.get(url)
             response.raise_for_status()
@@ -28,6 +31,7 @@ class ArxivScraper:
             return ""
 
     def parse_paper_info(self, dt_element, dd_element) -> Dict:
+        """Extract paper information from dt and dd elements"""
         try:
             arxiv_id = dt_element.find("a", {"title": "Abstract"}).text.strip()
             arxiv_id = arxiv_id.replace("arXiv:", "").strip()
@@ -71,6 +75,7 @@ class ArxivScraper:
             return {}
 
     def scrape_category(self, category: str) -> List[Dict]:
+        """Scrape papers from a specific category"""
         url = f"{self.base_url}/list/{category}/new"
         logger.info(f"Scraping category: {category}")
 
@@ -93,6 +98,7 @@ class ArxivScraper:
         return papers
 
     def save_to_csv(self, papers: List[Dict], filename: str):
+        """Save scraped papers to CSV file"""
         if not papers:
             logger.warning("No papers to save")
             return
