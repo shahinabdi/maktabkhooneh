@@ -70,6 +70,28 @@ class ArxivScraper:
             logger.error(f"Error parsing paper entry: {str(e)}")
             return {}
 
+    def scrape_category(self, category: str) -> List[Dict]:
+        url = f"{self.base_url}/list/{category}/new"
+        logger.info(f"Scraping category: {category}")
+
+        page_content = self.get_page_content(url)
+        if not page_content:
+            return []
+
+        soup = BeautifulSoup(page_content.text, "html.parser")
+        papers = []
+        dl_element = soup.find("dl")
+        if dl_element:
+            dt_elements = dt_element.find_all("dt")
+            dd_elements = dd_element.find_all("dd")
+
+            for dt, dd in zip(dt_elements, dd_elements):
+                paper_info = parse_paper_info(dt, dd)
+                if paper_info:
+                    papers.append(paper_info)
+        logger.info(f"Found {len(papers)} papers in category {category}")
+        return papers
+
 
 # url = "https://arxiv.org/list/astro-ph.CO/new"
 # page = requests.get(url)
