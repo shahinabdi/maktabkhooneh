@@ -1,5 +1,6 @@
 import time
 
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
@@ -46,3 +47,7 @@ for dt, dd in zip(dts, dds):
     papers.append(paper)
     # Sleep for server
     time.sleep(0.1)
+
+df = pd.DataFrame(papers)
+df.to_csv("arixic_papers.csv", index=False)
+print(f"Scraped {len(papers)} papers")
