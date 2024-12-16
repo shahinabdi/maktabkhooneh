@@ -78,15 +78,15 @@ class ArxivScraper:
         if not page_content:
             return []
 
-        soup = BeautifulSoup(page_content.text, "html.parser")
+        soup = BeautifulSoup(page_content, "html.parser")
         papers = []
         dl_element = soup.find("dl")
         if dl_element:
-            dt_elements = dt_element.find_all("dt")
-            dd_elements = dd_element.find_all("dd")
+            dt_elements = dl_element.find_all("dt")
+            dd_elements = dl_element.find_all("dd")
 
             for dt, dd in zip(dt_elements, dd_elements):
-                paper_info = parse_paper_info(dt, dd)
+                paper_info = self.parse_paper_info(dt, dd)
                 if paper_info:
                     papers.append(paper_info)
         logger.info(f"Found {len(papers)} papers in category {category}")
@@ -108,50 +108,23 @@ class ArxivScraper:
             logger.error(f"Error saving to CSV: {str(e)}")
 
 
-# url = "https://arxiv.org/list/astro-ph.CO/new"
-# page = requests.get(url)
-# soup = BeautifulSoup(page.text, "html.parser")
+def main():
+    categories = [
+        "astro-ph.CO",
+        "astro-ph.EP",
+        "astro-ph.GA",
+        "astro-ph.HE",
+        "astro-ph.IM",
+        "astro-ph.SR",
+    ]
+    scraper = ArxivScraper()
+
+    for category in categories:
+        papers = scraper.scrape_category(category)
+        if papers:
+            filename = f"arxiv_{category.replace('.', '_')}_{datetime.now().strftime('%Y-%m-%d')}.csv"
+            scraper.save_to_csv(papers, filename)
 
 
-# papers = []
-# dl = soup.find("dl")
-# dts = dl.find_all("dt")
-# dds = dl.find_all("dd")
-
-# for dt, dd in zip(dts, dds):
-#     paper = {}
-
-#     # ID
-#     paper["arxiv_id"] = dt.find("a", {"title": "Abstract"}).text.strip()
-#     # Title
-#     paper["title"] = (
-#         dd.find("div", {"class": "list-title"}).text.replace("Title:", "").strip()
-#     )
-#     # Authors
-#     paper["authors"] = dd.find("div", {"class": "list-authors"}).text
-#     # Get comments if exist
-#     comments_div = dd.find("div", {"class": "list-comments"})
-#     paper["comments"] = (
-#         comments_div.text.replace("Comments:", "").strip()
-#         if comments_div
-#         else "No Comment"
-#     )
-#     # Get subject if exist
-#     subjects_div = dd.find("div", {"class": "list-subjects"})
-#     paper["subjects"] = (
-#         subjects_div.text.replace("Subjects:", "").strip()
-#         if subjects_div
-#         else "No Subject"
-#     )
-#     # Get abstract of paper
-#     paper["abstract"] = dd.find("p", {"class": "mathjax"}).text.strip()
-#     # Make a pdf link using arxiv_id
-#     paper["pdf_link"] = f"https://arxiv.org/pdf/{paper['arxiv_id']}"
-
-#     papers.append(paper)
-#     # Sleep for server
-#     time.sleep(0.1)
-
-# df = pd.DataFrame(papers)
-# df.to_csv("arixic_papers.csv", index=False)
-# print(f"Scraped {len(papers)} papers")
+if __name__ == "__main__":
+    main()
