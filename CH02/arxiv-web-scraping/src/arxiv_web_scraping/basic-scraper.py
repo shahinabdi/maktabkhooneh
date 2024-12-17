@@ -8,7 +8,9 @@ import requests
 from bs4 import BeautifulSoup
 
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("arxiv_scraper.log"), logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
 
