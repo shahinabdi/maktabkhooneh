@@ -83,25 +83,25 @@ class ArxivScraper:
     async def __aenter__(self):
         """Set up async context manager"""
         self.session = aiohttp.ClientSession(
-            handlers={"User-Agent": self.config.user_agent}
+            headers={"User-Agent": self.config.user_agent}
         )
         return self
 
-    async def __aexit__(self):
+    async def __aexit__(self, exc_type, exc, tb):
         """Clean up async context manager"""
         await self.session.close()
 
     @sleep_and_retry
-    @limits(calls=self.config.rate_limit, period=1)
+    @limits(calls=3, period=1)
     @backoff.on_exception(
         backoff.expo,
         (aiohttp.ClientError, asyncio.TimeoutError),
-        max_tries=self.config.max_retries,
+        max_tries=3,
     )
     async def fetch_page(self, url: str) -> str:
         async with self.session.get(url, timeout=self.config.timeout) as response:
             response.raise_for_status()
-            return await response.text
+            return await response.text()
 
     def parse_paper_info(self, dt_element, dd_element) -> ArxivPaper:
         """Extract paper information from dt and dd elements"""
@@ -200,23 +200,21 @@ class ArxivScraper:
             logger.error(f"Error saving to CSV: {str(e)}")
 
 
-def main():
-    categories = [
-        "astro-ph.CO",
-        "astro-ph.EP",
-        "astro-ph.GA",
-        "astro-ph.HE",
-        "astro-ph.IM",
-        "astro-ph.SR",
-    ]
-    scraper = ArxivScraper()
+async def main():
+    config = ArxivConfig()
 
-    for category in categories:
-        papers = scraper.scrape_category(category)
-        if papers:
-            filename = f"arxiv_{category.replace('.', '_')}_{datetime.now().strftime('%Y-%m-%d')}.csv"
-            scraper.save_to_csv(papers, filename)
+    async with ArxivScraper(config) as scraper:
+        tasks = [scraper.scrape_category(category) for category in config.categories]
+        results = await asyncio.gather(*tasks)
+
+        for category, papers in zip(config.categories, results):
+            scraper.save_to_csv(papers, category)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("Scrapping interrupted by user")
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
