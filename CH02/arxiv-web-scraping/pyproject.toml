@@ -1,17 +1,20 @@
 [tool.poetry]
 name = "arxiv-web-scraping"
-version = "2.1.0"
+version = "2.2.0"
 description = "Multi Category Scraper: Arxiv.org"
 authors = ["Shahin ABDI <contact@shahinabdi.fr>"]
 readme = "README.md"
 packages = [{include = "arxiv_web_scraping", from = "src"}]
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.32.3"
 beautifulsoup4 = "^4.12.3"
 pandas = "^2.2.3"
-
+aiohttp = "^3.11.10"
+backoff = "^2.2.1"
+ratelimit = "^2.2.1"
 
 [build-system]
 requires = ["poetry-core"]
