@@ -103,16 +103,6 @@ class ArxivScraper:
             response.raise_for_status()
             return await response.text
 
-    def get_page_content(self, url: str) -> str:
-        """Fetch page content"""
-        try:
-            response = self.session.get(url)
-            response.raise_for_status()
-            return response.text
-        except requests.RequestException as e:
-            logging.error(f"Error fetching {url}: {str(e)}")
-            return ""
-
     def parse_paper_info(self, dt_element, dd_element) -> ArxivPaper:
         """Extract paper information from dt and dd elements"""
         try:
