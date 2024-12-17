@@ -1,11 +1,17 @@
+import asyncio
 import csv
 import logging
 import time
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List
+from pathlib import Path
+from typing import Dict, List, Optional
 
+import aiohttp
+import backoff
 import requests
 from bs4 import BeautifulSoup
+from ratelimit import limits, sleep_and_retry
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,12 +21,89 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class ArxivConfig:
+    """Configuration for ArxivScraper"""
+
+    base_url: str = "https://arxiv.org"
+    categories: List[str] = None
+    output_dir: str = "output"
+    rate_limit: int = 3
+    max_retries: int = 3
+    timeout: int = 30
+    user_agent: str = "ArxivScrapper/2.0"
+
+    def __post_init__(self):
+        if self.categories is None:
+            self.categories = [
+                "astro-ph.CO",
+                "astro-ph.EP",
+                "astro-ph.GA",
+                "astro-ph.HE",
+                "astro-ph.IM",
+                "astro-ph.SR",
+            ]
+
+
+class ArxivPaper:
+    def __init__(self, data: Dict):
+        self.arxiv_id: str = data.get("arxiv_id", "")
+        self.title: str = data.get("title", "")
+        self.authors: List[str] = data.get("authors", [])
+        self.abstract: str = data.get("abstract", "")
+        self.categories: List[str] = data.get("categories", [])
+        self.primary_category: str = data.get("primary_category", "")
+        self.comments: str = data.get("comments", "")
+        self.pdf_url: str = data.get("pdf_url", "")
+        self.published_date: str = data.get("published_date", "")
+        self.scrape_date: str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    def to_dict(self) -> Dict:
+        """Convert paper to dictionary"""
+        return {
+            "arxiv_id": self.arxiv_id,
+            "title": self.title,
+            "authors": ";".join(self.authors),
+            "abstract": self.abstract,
+            "categories": ";".join(self.categories),
+            "primary_category": self.primary_category,
+            "comments": self.comments,
+            "pdf_url": self.pdf_url,
+            "published_date": self.published_date,
+            "scrape_date": self.scrape_date,
+        }
+
+
 class ArxivScraper:
     """Scraper for extracting paper information from arxiv.org"""
 
-    def __init__(self, base_url: str = "https://arxiv.org"):
-        self.base_url = base_url
-        self.session = requests.Session()
+    def __init__(self, config: ArxivConfig):
+        self.config = config
+        self.session: Optional[aiohttp.ClientSession] = None
+        Path(config.output_dir).mkdir(parents=True, exist_ok=True)
+
+    async def __aenter__(self):
+        """Set up async context manager"""
+        self.session = aiohttp.ClientSession(
+            handlers={"User-Agent": self.config.user_agent}
+        )
+        return self
+
+    async def __aexit__(self):
+        """Clean up async context manager"""
+        await self.session.close()
+
+    @sleep_and_retry
+    @limits(calls=self.config.rate_limit, period=1)
+    @backoff.on_exception(
+        backoff.expo,
+        (aiohttp.ClientError, asyncio.TimeoutError),
+        max_tries=self.config.max_retries,
+    )
+    async def fetch_page(self, url: str) -> str:
+        async with self.session.get(url, timeout=self.config.timeout) as response:
+            response.raise_for_status()
+            return await response.text
 
     def get_page_content(self, url: str) -> str:
         """Fetch page content"""
