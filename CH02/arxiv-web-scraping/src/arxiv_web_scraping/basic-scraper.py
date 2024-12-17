@@ -1,5 +1,4 @@
 import asyncio
-import csv
 import logging
 import time
 from dataclasses import dataclass
@@ -9,6 +8,7 @@ from typing import Dict, List, Optional
 
 import aiohttp
 import backoff
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from ratelimit import limits, sleep_and_retry
@@ -193,18 +193,18 @@ class ArxivScraper:
             logger.error(f"Error scraping category {category}: {str(e)}")
             return []
 
-    def save_to_csv(self, papers: List[Dict], filename: str):
+    def save_to_csv(self, papers: List[ArxivPaper], category: str):
         """Save scraped papers to CSV file"""
         if not papers:
-            logger.warning("No papers to save")
+            logger.warning(f"No papers to save for category {category}")
             return
-
         try:
-            fieldnames = papers[0].keys()
-            with open(filename, "w", newline="", encoding="utf-8") as f:
-                writer = csv.DictWriter(f, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerows(papers)
+            df = pd.DataFrame([paper.to_dict() for paper in papers])
+            filename = (
+                Path(self.config.output_dir)
+                / f"arxiv_{category.replace('.','_')}_{datetime.now().strftime('%Y%m%d')}.csv"
+            )
+            df.to_csv(filename, index=False)
             logger.info(f"Successfully saved {len(papers)} papers to {filename}")
         except IOError as e:
             logger.error(f"Error saving to CSV: {str(e)}")
