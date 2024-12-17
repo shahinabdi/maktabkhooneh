@@ -168,28 +168,30 @@ class ArxivScraper:
             logger.error(f"Error parsing paper entry: {str(e)}")
             return None
 
-    def scrape_category(self, category: str) -> List[Dict]:
+    async def scrape_category(self, category: str) -> List[ArxivPaper]:
         """Scrape papers from a specific category"""
-        url = f"{self.base_url}/list/{category}/new"
+        url = f"{self.config.base_url}/list/{category}/new"
         logger.info(f"Scraping category: {category}")
 
-        page_content = self.get_page_content(url)
-        if not page_content:
+        try:
+            html = await self.fetch_page(url)
+            soup = BeautifulSoup(html, "html.parser")
+            papers = []
+            dl_element = soup.find("dl")
+            if dl_element:
+                dt_elements = dl_element.find_all("dt")
+                dd_elements = dl_element.find_all("dd")
+
+                for dt, dd in zip(dt_elements, dd_elements):
+                    paper_info = self.parse_paper_info(dt, dd)
+                    if paper_info:
+                        papers.append(paper_info)
+
+            logger.info(f"Found {len(papers)} papers in category {category}")
+            return papers
+        except Exception as e:
+            logger.error(f"Error scraping category {category}: {str(e)}")
             return []
-
-        soup = BeautifulSoup(page_content, "html.parser")
-        papers = []
-        dl_element = soup.find("dl")
-        if dl_element:
-            dt_elements = dl_element.find_all("dt")
-            dd_elements = dl_element.find_all("dd")
-
-            for dt, dd in zip(dt_elements, dd_elements):
-                paper_info = self.parse_paper_info(dt, dd)
-                if paper_info:
-                    papers.append(paper_info)
-        logger.info(f"Found {len(papers)} papers in category {category}")
-        return papers
 
     def save_to_csv(self, papers: List[Dict], filename: str):
         """Save scraped papers to CSV file"""
