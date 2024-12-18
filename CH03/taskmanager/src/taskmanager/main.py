@@ -110,4 +110,11 @@ while True:
         else:
             print("Task not found!")
     elif choice == "5":
+        if current_task != None:
+            print("Error: Please stop the current task first!")
+            print(f"Task: {current_task} Status: Running")
+            continue
+        print("Bye Bye!")
         break
+    else:
+        print("Invalid choice!")
