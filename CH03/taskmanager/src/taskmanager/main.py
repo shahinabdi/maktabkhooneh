@@ -94,7 +94,20 @@ while True:
                         print(f"End: {session['end']}")
                         print(f"Duration: {session['duration']:.2f} seconds")
                         print("*" * 20)
+    # 4. Delete task
+    elif choice == "4":
+        task_name = input("Enter task name to delete: ")
+
+        if task_name in tasks:
+            del tasks[task_name]
+            try:
+                f = open("tasks.json", "w")
+                json.dump(tasks, f)
+                f.close()
+                print(f"Task '{task_name}' deleted!")
+            except:
+                print("Error: Saving data was unsuccessful!")
+        else:
+            print("Task not found!")
     elif choice == "5":
         break
-
-# 4. Delete task
