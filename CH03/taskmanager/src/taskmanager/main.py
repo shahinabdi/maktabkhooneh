@@ -25,8 +25,8 @@ while True:
     print("5. Exit")
 
     choice = input("Choose option: ")
+    # 1. Start task
     if choice == "1":
-        # 1. Start task
         if current_task != None:
             print("Error: One task already running!")
             continue
@@ -37,6 +37,7 @@ while True:
 
         if task_name not in tasks:
             tasks[task_name] = {"total_time": 0, "sessions": []}
+    # 2. Stop task
     elif choice == "2":
         if current_task == None:
             print("Error: No task running!")
@@ -68,8 +69,32 @@ while True:
 
         current_task = None
         start_time = None
+    # 3. View tasks
+    elif choice == "3":
+        if len(tasks) == 0:
+            print("No tasks recorded!")
+        else:
+            print("\nTask Summary:")
+            print("=" * 40)
+
+            for task_name, task_data in tasks.items():
+                total_time = task_data["total_time"]
+                sessions = len(task_data["sessions"])
+
+                print(f"\nTask: {task_name}")
+                print(f"Total time: {total_time:.2f} seconds")
+                print(f"Number of sessions: {sessions}")
+
+                # Print last 3 sessions:
+                if sessions > 0:
+                    print("\nLast 3 seesions:")
+                    print("-" * 20)
+                    for session in task_data["sessions"][-3:]:
+                        print(f"Start: {session['start']}")
+                        print(f"End: {session['end']}")
+                        print(f"Duration: {session['duration']:.2f} seconds")
+                        print("*" * 20)
     elif choice == "5":
         break
-# 2. Stop task
-# 3. View tasks
+
 # 4. Delete task
