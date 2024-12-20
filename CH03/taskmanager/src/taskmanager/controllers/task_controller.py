@@ -74,7 +74,27 @@ class TaskController:
             self.view.show_error("Please enter a valid number")
 
     def handle_delete_task(self) -> None:
-        pass
+        tasks = self.model.get_all_tasks()
+        if not tasks:
+            self.view.show_message("No tasks to delete!")
+            return
+
+        self.view.show_task_list(tasks)
+        task_num = self.view.get_input("Enter task number to delete (0 to cancel): ")
+
+        if task_num == "0":
+            return
+
+        try:
+            task_index = int(task_num) - 1
+            if 0 <= task_index < len(tasks):
+                task_name = tasks[task_index]
+                self.model.delete_task(task_name)
+                self.view.show_message(f"Task '{task_name}' deleted!")
+            else:
+                self.view.show_error("Invalid task number")
+        except ValueError:
+            self.view.show_error("Please enter a valid number")
 
     def handle_exit(self) -> None:
         pass
