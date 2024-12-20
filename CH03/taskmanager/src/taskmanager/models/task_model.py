@@ -5,10 +5,20 @@ from typing import Dict, List, Optional
 
 class TaskModel:
     def __init__(self, filename: str = "tasks.json"):
-        pass
+        self.filename = filename
+        self.tasks: Dict = {}
+        self.current_task: Optional[str] = None
+        self.start_time: Optional[float] = None
+        self.load_tasks()
 
     def load_tasks(self) -> None:
-        pass
+        try:
+            with open(self.filename, "r") as f:
+                self.tasks = json.load(f)
+        except FileNotFoundError:
+            self.tasks = {}
+        except json.JSONDecodeError:
+            raise Exception("Invalid JSON format in tasks file")
 
     def save_tasks(self) -> None:
         pass
