@@ -42,7 +42,35 @@ class TaskModel:
             self.tasks[normalized_task_name] = {"total_time": 0, "sessions": []}
 
     def stop_task(self) -> Dict:
-        pass
+        if self.current_task is None:
+            raise Exception("No task is currently running")
+
+        end_time = datetime.now().timestamp()
+        duration = end_time - self.start_time
+
+        task_data = self.tasks[self.current_task]
+        task_data["total_time"] += duration
+
+        session = {
+            "start": datetime.fromtimestamp(self.start_time).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+            "end": datetime.fromtimestamp(end_time).strftime("%Y-%m-%d %H:%M:%S"),
+            "duration": duration,
+        }
+
+        task_data["sessions"].append(session)
+        self.save_tasks()
+
+        result = {
+            "task_name": self.current_task,
+            "duration": duration,
+            "session": session,
+        }
+
+        self.current_task = None
+        self.start_time = None
+        return result
 
     def delete_task(self, task_name: str) -> None:
         pass
