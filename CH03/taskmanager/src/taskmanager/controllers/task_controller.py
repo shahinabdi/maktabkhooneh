@@ -34,7 +34,10 @@ class TaskController:
         self.view.show_message(f"Task '{task_name}' started!")
 
     def handle_stop_task(self) -> None:
-        pass
+        result = self.model.stop_task()
+        self.view.show_message(
+            f"Task '{result['task_name']}' stopped! Duration: {result['duration']:.2f} seconds"
+        )
 
     def handle_view_tasks(self) -> None:
         pass
