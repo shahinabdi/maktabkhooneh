@@ -28,3 +28,11 @@ class TaskView:
         print("\nAvailable Tasks:")
         for i, task in enumerate(tasks, 1):
             print(f"{i}. {task}")
+
+    @staticmethod
+    def show_task_options() -> None:
+        print("\nView Options:")
+        print("1. Basic Info")
+        print("2. All Sessions")
+        print("3. Last 3 Sessions")
+        print("4. Back Main Menu")
