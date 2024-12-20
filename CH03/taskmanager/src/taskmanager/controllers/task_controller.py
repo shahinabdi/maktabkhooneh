@@ -96,5 +96,12 @@ class TaskController:
         except ValueError:
             self.view.show_error("Please enter a valid number")
 
-    def handle_exit(self) -> None:
-        pass
+    def handle_exit(self) -> bool:
+        if self.model.get_current_task() is not None:
+            self.view.show_error("Please stop the current task first!")
+            self.view.show_message(
+                f"Task: {self.model.get_current_task()} Status: Running"
+            )
+            return False
+        self.view.show_message("Goodbye!")
+        return True
