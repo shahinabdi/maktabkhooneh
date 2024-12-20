@@ -8,7 +8,25 @@ class TaskController:
         self.view = view
 
     def run(self) -> None:
-        pass
+        while True:
+            try:
+                self.view.show_menu()
+                choice = self.view.get_input("Choose option: ")
+                if choice == "1":
+                    self.handle_start_task()
+                elif choice == "2":
+                    self.handle_stop_task()
+                elif choice == "3":
+                    self.handle_view_tasks()
+                elif choice == "4":
+                    self.handle_delete_task()
+                elif choice == "5":
+                    self.handle_exit()
+                    break
+                else:
+                    self.view.show_error("Invalid choice")
+            except Exception as e:
+                self.view.show_error(str(e))
 
     def handle_start_task(self) -> None:
         pass
