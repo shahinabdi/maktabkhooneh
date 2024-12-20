@@ -57,7 +57,7 @@ class TaskController:
                 task_name = tasks[task_index]
 
                 while True:
-                    self.show_task_options()
+                    self.view.show_task_options()
                     view_choice = self.view.get_input("Choose view option: ")
 
                     if view_choice == "4":
