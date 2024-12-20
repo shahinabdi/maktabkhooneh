@@ -28,7 +28,18 @@ class TaskModel:
             raise Exception(f"Error saving tasks: {str(e)}")
 
     def start_task(self, task_name: str) -> None:
-        pass
+        if self.current_task is not None:
+            raise Exception("One task is already running!")
+
+        normalized_task_name = task_name.strip().lower()
+        if not normalized_task_name:
+            raise Exception("Task name cannot be empty")
+
+        self.start_time = datetime.now().timestamp()
+        self.current_task = normalized_task_name
+
+        if normalized_task_name not in self.tasks:
+            self.tasks[normalized_task_name] = {"total_time": 0, "sessions": []}
 
     def stop_task(self) -> Dict:
         pass
