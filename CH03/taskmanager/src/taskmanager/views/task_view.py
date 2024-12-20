@@ -14,3 +14,7 @@ class TaskView:
     @staticmethod
     def get_input(prompt: str) -> str:
         return input(prompt).strip()
+
+    @staticmethod
+    def show_message(message: str) -> None:
+        print(message)
