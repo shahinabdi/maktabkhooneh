@@ -73,7 +73,13 @@ class TaskModel:
         return result
 
     def delete_task(self, task_name: str) -> None:
-        pass
+        normalized_task_name = task_name.strip().lower()
+
+        if normalized_task_name not in self.tasks:
+            raise Exception("Task not found")
+
+        del self.tasks[normalized_task_name]
+        self.save_tasks()
 
     def get_current_task(self) -> Optional[str]:
         pass
