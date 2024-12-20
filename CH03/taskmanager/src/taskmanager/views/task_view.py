@@ -18,3 +18,13 @@ class TaskView:
     @staticmethod
     def show_message(message: str) -> None:
         print(message)
+
+    @staticmethod
+    def show_error(error: str) -> None:
+        print(f"Error: {error}")
+
+    @staticmethod
+    def show_task_list(tasks: List[str]) -> None:
+        print("\nAvailable Tasks:")
+        for i, task in enumerate(tasks, 1):
+            print(f"{i}. {task}")
