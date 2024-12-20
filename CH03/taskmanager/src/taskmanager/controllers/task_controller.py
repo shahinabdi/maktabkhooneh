@@ -40,7 +40,38 @@ class TaskController:
         )
 
     def handle_view_tasks(self) -> None:
-        pass
+        tasks = self.model.get_all_tasks()
+
+        if not tasks:
+            self.view.show_message("No tasks recorded!")
+            return
+
+        self.view.show_task_list(tasks)
+        task_num = self.view.get_input("Enter task number to view (0 to cancel): ")
+        if task_num == "0":
+            return
+
+        try:
+            task_index = int(task_num) - 1
+            if 0 <= task_index < len(tasks):
+                task_name = tasks[task_index]
+
+                while True:
+                    self.show_task_options()
+                    view_choice = self.view.get_input("Choose view option: ")
+
+                    if view_choice == "4":
+                        break
+
+                    if view_choice in ["1", "2", "3"]:
+                        task_data = self.model.get_task_details(task_name)
+                        self.view.show_task_details(task_name, task_data, view_choice)
+                    else:
+                        self.view.show_error("Invalid view option")
+            else:
+                self.view.show_error("Invalid task number")
+        except ValueError:
+            self.view.show_error("Please enter a valid number")
 
     def handle_delete_task(self) -> None:
         pass
