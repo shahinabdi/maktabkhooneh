@@ -36,3 +36,22 @@ class TaskView:
         print("2. All Sessions")
         print("3. Last 3 Sessions")
         print("4. Back Main Menu")
+
+    @staticmethod
+    def show_task_details(task_name: str, task_data: Dict, view_type: str) -> None:
+        print(f"\nTask: {task_name}")
+        print(f"Total time: {task_data['total_time']:.2f} seconds")
+        print(f"Number of sessions: {len(task_data['sessions'])}")
+
+        if view_type in ["2", "3"]:
+            sessions = task_data["sessions"]
+            if view_type == "3":
+                sessions = sessions[-3:]
+
+            print("\nSessions:")
+            print("=" * 4)
+            for session in sessions:
+                print(f"Start: {session['start']}")
+                print(f"End: {session['end']}")
+                print(f"Duration: {session['duration']:.2f} seconds")
+                print("-" * 40)
