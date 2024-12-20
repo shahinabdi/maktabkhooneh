@@ -82,10 +82,14 @@ class TaskModel:
         self.save_tasks()
 
     def get_current_task(self) -> Optional[str]:
-        pass
+        return self.current_task
 
     def get_all_tasks(self) -> List[str]:
-        pass
+        return sorted(list(self.tasks.keys()))
 
-    def get_taks_details(self, task_name: str) -> Dict:
-        pass
+    def get_task_details(self, task_name: str) -> Dict:
+        normalized_task_name = task_name.strip().lower()
+
+        if normalized_task_name not in self.tasks:
+            raise Exception("Task not found")
+        return self.tasks[normalized_task_name]
