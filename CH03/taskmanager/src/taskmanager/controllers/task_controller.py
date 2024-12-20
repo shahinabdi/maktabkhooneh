@@ -29,7 +29,9 @@ class TaskController:
                 self.view.show_error(str(e))
 
     def handle_start_task(self) -> None:
-        pass
+        task_name = self.view.get_input("Enter task name: ")
+        self.model.start_task(task_name)
+        self.view.show_message(f"Task '{task_name}' started!")
 
     def handle_stop_task(self) -> None:
         pass
