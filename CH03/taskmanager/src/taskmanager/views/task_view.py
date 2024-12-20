@@ -10,3 +10,7 @@ class TaskView:
         print("3. View task")
         print("4. Delete task")
         print("5. Exit")
+
+    @staticmethod
+    def get_input(prompt: str) -> str:
+        return input(prompt).strip()
