@@ -21,7 +21,11 @@ class TaskModel:
             raise Exception("Invalid JSON format in tasks file")
 
     def save_tasks(self) -> None:
-        pass
+        try:
+            with open(self.filename, "w") as f:
+                json.dump(self.tasks, f, indent=4)
+        except Exception as e:
+            raise Exception(f"Error saving tasks: {str(e)}")
 
     def start_task(self, task_name: str) -> None:
         pass
