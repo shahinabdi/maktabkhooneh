@@ -52,3 +52,8 @@ class TestTaskModel:
         """Test delete task not exist"""
         with pytest.raises(Exception, match="Task not found"):
             task_model.delete_task("python")
+
+    def test_get_all_tasks_sorted(self, task_model):
+        """Test tasks are return sorted"""
+        task_model.tasks = {"zebra": {}, "alpha": {}, "gamma": {}, "beta": {}}
+        assert task_model.get_all_tasks() == ["alpha", "beta", "gamma", "zebra"]
