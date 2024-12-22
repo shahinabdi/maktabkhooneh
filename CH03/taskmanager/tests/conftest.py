@@ -40,3 +40,20 @@ def mock_datetime(monkeypatch):
     monkeypatch.setattr("src.taskmanager.models.task_model.datetime", MockDateTime)
     MockDateTime.reset()
     return MockDateTime
+
+
+@pytest.fixture
+def mock_tasks_data():
+    """Sample task data for testing"""
+    return {
+        "coding": {
+            "total_time": 3600,
+            "sesssions": [
+                {
+                    "start": "2024-01-01 10:00:00",
+                    "end": "2024-01-01 11:00:00",
+                    "duration": 3600,
+                }
+            ],
+        }
+    }
