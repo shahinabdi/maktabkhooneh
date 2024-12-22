@@ -41,3 +41,14 @@ class TestTaskModel:
         assert task_model.current_task is None
         assert "test_task" in task_model.tasks
         assert task_model.tasks["test_task"]["total_time"] == 1800
+
+    def test_delete_task(self, task_model, mock_tasks_data):
+        """Test task deletion"""
+        task_model.tasks = mock_tasks_data.copy()
+        task_model.delete_task("coding")
+        assert "coding" not in task_model.tasks
+
+    def test_delete_task_not_exist(self, task_model):
+        """Test delete task not exist"""
+        with pytest.raises(Exception, match="Task not found"):
+            task_model.delete_task("python")
