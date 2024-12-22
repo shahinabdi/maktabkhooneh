@@ -57,3 +57,11 @@ class TestTaskModel:
         """Test tasks are return sorted"""
         task_model.tasks = {"zebra": {}, "alpha": {}, "gamma": {}, "beta": {}}
         assert task_model.get_all_tasks() == ["alpha", "beta", "gamma", "zebra"]
+
+    def test_get_task_details(self, task_model, mock_tasks_data):
+        """Test task details"""
+        task_model.tasks = mock_tasks_data.copy()
+        details = task_model.get_task_details("coding")
+        assert details["total_time"] == 3600
+        assert len(details["sessions"]) == 1
+        assert details["sessions"][0]["duration"] == 3600
