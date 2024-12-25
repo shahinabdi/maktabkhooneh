@@ -31,3 +31,18 @@ class TestTaskView:
         assert "Available Tasks:" in output
         for i, task in enumerate(tasks, 1):
             assert f"{i}. {task}" in output
+
+    @pytest.mark.parametrize(
+        "view_type, show_sessions", [("1", False), ("2", True), ("3", True)]
+    )
+    def test_show_task_details(
+        self, task_view, mock_stdout, mock_tasks_data, view_type, show_sessions
+    ):
+        """Test task details display"""
+        task_view.show_task_details("coding", mock_tasks_data["coding"], view_type)
+        output = "\n".join(mock_stdout)
+        assert "Task: coding" in output
+        assert "Total time: 3600.00 seconds" in output
+        if show_sessions:
+            assert "Start: 2024-01-01" in output
+            assert "Duration: 3600.00 seconds" in output
