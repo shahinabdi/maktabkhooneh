@@ -16,3 +16,9 @@ class TestTaskView:
         mock_stdin.add_response("       test input      ")
         result = task_view.get_input("Enter test: ")
         assert result == "test input"
+
+    def test_show_message(self, task_view, mock_stdout):
+        """Test message display"""
+        message = "Test message"
+        task_view.show_message(message)
+        assert message in mock_stdout
