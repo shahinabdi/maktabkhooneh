@@ -38,6 +38,23 @@ def mock_stdin(monkeypatch):
 
 
 @pytest.fixture
+def mock_tasks_data():
+    """Sample task data for testing"""
+    return {
+        "coding": {
+            "total_time": 3600,
+            "sessions": [
+                {
+                    "start": "2024-01-01 10:00:00",
+                    "end": "2024-01-01 11:00:00",
+                    "duration": 3600,
+                }
+            ],
+        }
+    }
+
+
+@pytest.fixture
 def task_view():
     """TaskView instance"""
     return TaskView
