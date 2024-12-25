@@ -1,6 +1,8 @@
 import builtins
+from datetime import datetime
 
 import pytest
+from src.taskmanager.models.task_model import TaskModel
 from src.taskmanager.views.task_view import TaskView
 
 
@@ -90,12 +92,6 @@ def mock_tasks_data():
 def task_view():
     """TaskView instance"""
     return TaskView
-
-
-from datetime import datetime
-
-import pytest
-from src.taskmanager.models.task_model import TaskModel
 
 
 @pytest.fixture
