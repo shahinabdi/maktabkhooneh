@@ -2,6 +2,7 @@ import builtins
 from datetime import datetime
 
 import pytest
+from src.taskmanager.controllers.task_controller import TaskController
 from src.taskmanager.models.task_model import TaskModel
 from src.taskmanager.views.task_view import TaskView
 
@@ -98,3 +99,9 @@ def task_view():
 def task_model(tmp_path):
     test_file = tmp_path / "test_task.json"
     return TaskModel(filename=str(test_file))
+
+
+@pytest.fixture
+def task_controller(task_model, task_view):
+    """TaskController instance"""
+    return TaskController(task_model, task_view)
