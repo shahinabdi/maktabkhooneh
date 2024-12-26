@@ -85,3 +85,8 @@ class TestTaskController:
             task_controller.handle_delete_task()
 
         mock_print.assert_any_call("Error: Please enter a valid number")
+
+    def test_handle_view_tasks_empty(self, task_controller, capsys):
+        task_controller.handle_view_tasks()
+        captured = capsys.readouterr()
+        assert "No tasks recorded!" in captured.out
