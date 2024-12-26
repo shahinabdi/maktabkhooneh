@@ -1,5 +1,5 @@
-from models.task_model import TaskModel
-from views.task_view import TaskView
+from src.taskmanager.models.task_model import TaskModel
+from src.taskmanager.views.task_view import TaskView
 
 
 class TaskController:
