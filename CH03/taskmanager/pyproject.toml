@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "taskmanager"
-version = "3.0.0"
+version = "3.1.0"
 description = ""
 authors = ["Shahin ABDI <contact@shahinabdi.fr>"]
 readme = "README.md"
@@ -17,3 +17,6 @@ pytest-cov = "^6.0.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = "--cov --cov-report=term-missing --cov-report=html"
