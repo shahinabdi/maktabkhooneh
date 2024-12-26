@@ -47,3 +47,22 @@ class TestIntegration:
         output = "\n".join(mock_stdout)
         assert "Task 'python' stopped!" in output  # Output must be in lowercase
         assert "Duration: 1800.00 seconds" in output
+
+    def test_task_persistence(
+        self, task_controller, task_model, mock_stdin, mock_datetime, tmp_path
+    ):
+        """Test task data persistance"""
+        mock_datetime.reset()
+        test_file = tmp_path / "test.json"
+        task_model.filename = str(test_file)
+
+        # Create and save a task
+        mock_stdin.add_response("Test task")
+        task_controller.handle_start_task()
+        task_controller.handle_stop_task()  # add 30 minutes to the task
+
+        # Verify that the task is saved
+        with open(str(test_file), "r") as f:
+            saved_task = json.load(f)
+            assert "test task" in saved_task
+            assert saved_task["test task"]["total_time"] == 1800
