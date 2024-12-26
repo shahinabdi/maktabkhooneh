@@ -43,3 +43,11 @@ class TestTaskController:
             with patch("builtins.input", side_effect=[menu_choice, "5"]):
                 task_controller.run()
         assert called_method == expected_calls
+
+    def test_handle_invalid_menu_choice(self, task_controller, monkeypatch, capsys):
+        """Test stderr in invalid choice"""
+        inputs = iter(["invalid", "5"])
+        monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+        task_controller.run()
+        captured = capsys.readouterr()
+        assert "Error: Invalid choice" in captured.out
