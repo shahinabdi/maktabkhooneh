@@ -75,3 +75,13 @@ class TestTaskController:
 
     def test_handle_exit_without_running_task(self, task_controller):
         assert task_controller.handle_exit()
+
+    def test_handle_delete_task_invalid_input(self, task_controller, monkeypatch):
+        task_controller.model.tasks = {"test task": {}}
+        inputs = iter(["invalid", "0"])
+        monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+        with patch("builtins.print") as mock_print:
+            task_controller.handle_delete_task()
+
+        mock_print.assert_any_call("Error: Please enter a valid number")
