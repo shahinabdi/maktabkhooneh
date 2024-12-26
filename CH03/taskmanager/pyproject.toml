@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "taskmanager"
+version = "3.0.0"
+description = ""
+authors = ["Shahin ABDI <contact@shahinabdi.fr>"]
+readme = "README.md"
+packages = [{include = "taskmanager", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
