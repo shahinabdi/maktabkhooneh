@@ -51,3 +51,19 @@ class TestTaskController:
         task_controller.run()
         captured = capsys.readouterr()
         assert "Error: Invalid choice" in captured.out
+
+    @pytest.mark.slow
+    def test_handle_view_tasks_complete_flow(
+        self, task_controller, monkeypatch, mock_tasks_data
+    ):
+        task_controller.model.tasks = mock_tasks_data
+
+        inputs = iter(["1", "2", "4"])
+        monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+        with patch("builtins.print") as mock_print:
+            task_controller.handle_view_tasks()
+
+        calls = mock_print.call_args_list
+        assert any("Task: coding" in str(c) for c in calls)
+        assert any("Total time: 3600.00 seconds" in str(c) for c in calls)
