@@ -105,3 +105,11 @@ def task_model(tmp_path):
 def task_controller(task_model, task_view):
     """TaskController instance"""
     return TaskController(task_model, task_view)
+
+
+def pytest_configure(config):
+    """Register custom markers."""
+    config.addinivalue_line(
+        "markers", "smoke: mark test as smoke test (quick sanity check)"
+    )
+    config.addinivalue_line("markers", "slow: mark test as slow running")
