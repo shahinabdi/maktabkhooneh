@@ -67,3 +67,11 @@ class TestTaskController:
         calls = mock_print.call_args_list
         assert any("Task: coding" in str(c) for c in calls)
         assert any("Total time: 3600.00 seconds" in str(c) for c in calls)
+
+    @pytest.mark.smoke
+    def test_handle_exit_with_running_task(self, task_controller):
+        task_controller.model.current_task = "test task"
+        assert not task_controller.handle_exit()
+
+    def test_handle_exit_without_running_task(self, task_controller):
+        assert task_controller.handle_exit()
